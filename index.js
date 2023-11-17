@@ -34,13 +34,20 @@ async function run() {
 
 
 const menuCollection=client.db('bistroDb').collection('menu')
+const reviewCollection=client.db('bistroDb').collection('reviews')
 
-
+// get all menu data 
 app.get('/menu',async(req,res)=>{
     const cursor = menuCollection.find();
       const result = await cursor.toArray();
       res.send(result);
 })
+app.get('/reviews',async(req,res)=>{
+    const cursor = reviewCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+})
+
 
 
 
