@@ -49,7 +49,12 @@ app.get('/reviews',async(req,res)=>{
 })
 
 
-
+// carts collection 
+app.post("/carts",async(req,res)=>{
+  const cart =req.body
+  const result=await cartCollection.insertOne(cart)
+  res.send(result)
+})
 
 
 
