@@ -34,9 +34,20 @@ const menuCollection=client.db('bistroDb').collection('menu')
 const reviewCollection=client.db('bistroDb').collection('reviews')
 const cartCollection =client.db("bistroDb").collection("carts")
 const userCollection=client.db('bistroDb').collection('users')
+
+
 // users related api 
 app.post("/users",async(req,res)=>{
   const user=req.body 
+  // insert email if user doesn't exists
+  //i can do this many ways (email unique ,upsert,simple checking )
+
+const query={email:user.email}
+const existingUser=await userCollection.findOne(query)
+if (existingUser){
+  return res.send({message:"user already exist",insertedId:null})
+}
+ 
   const result=await userCollection.insertOne(user)
   res.send(result)
 })
