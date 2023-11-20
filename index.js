@@ -14,6 +14,9 @@ app.use(cors())
 app.use(express.json())
 
 
+
+
+
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.crat2tn.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -36,10 +39,42 @@ const reviewCollection=client.db('bistroDb').collection('reviews')
 const cartCollection =client.db("bistroDb").collection("carts")
 const userCollection=client.db('bistroDb').collection('users')
 
+// jwt related api 
+
+app.post('/jwt', async (req, res) => {
+  const user = req.body;
+  const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+  res.send({ token });
+})
+
+
+// jwt verify middlewares
+
+const verifyToken = (req, res, next) => {
+  console.log("inside verify token", req.headers.authorization);
+
+  if (!req.headers.authorization) {
+    return res.status(401).send({ message: "Forbidden Access" });
+  }
+
+  const token = req.headers.authorization.split(' ')[1];
+
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(401).send({ message: "Forbidden Access" });
+    }
+    req.decoded = decoded;
+    next();
+  });
+};
+
+
+
 
 // users related api 
 
-app.get("/users",async(req,res)=>{
+app.get("/users",verifyToken,async(req,res)=>{
+ 
   const result=await userCollection.find().toArray()
   res.send(result)
 })
