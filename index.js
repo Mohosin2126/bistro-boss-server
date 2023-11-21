@@ -158,6 +158,16 @@ app.get('/menu',async(req,res)=>{
       const result = await cursor.toArray();
       res.send(result);
 })
+
+app.post("/menu",async(req,res)=>{
+  const menu=req.body
+  const result=await menuCollection.insertOne(menu)
+  res.send(result)
+})
+
+
+
+
 app.get('/reviews',async(req,res)=>{
     const cursor = reviewCollection.find();
       const result = await cursor.toArray();
